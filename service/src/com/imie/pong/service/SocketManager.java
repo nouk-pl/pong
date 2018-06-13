@@ -1,17 +1,18 @@
-package com.imie.pong.client;
+package com.imie.pong.service;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Random;
 
-public class ClientConnexion implements Runnable {
+public class SocketManager implements Runnable {
 
 	private Socket connexion = null;
 	private PrintWriter writer = null;
 	private BufferedInputStream reader = null;
+	
+	private boolean closeConnexion = false;
 
 	// Notre liste de commandes. Le serveur nous répondra différemment selon la
 	// commande utilisée.
@@ -19,24 +20,28 @@ public class ClientConnexion implements Runnable {
 	private static int count = 0;
 	private String name = "Client-";
 
-	public ClientConnexion(String host, int port) {
-		name += ++count;
+	public SocketManager(String host, int port) {
 		
+		name += ++count;
+
 		try {
+
 			connexion = new Socket(host, port);
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	public void run() {
 
 		// nous n'allons faire que 10 demandes par thread...
-		for (int i = 0; i < 10; i++) {
+		// for (int i = 0; i < 10; i++) {
 			try {
+
 				Thread.currentThread().sleep(1000);
+
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -55,6 +60,7 @@ public class ClientConnexion implements Runnable {
 
 				// On attend la réponse
 				String response = read();
+				
 				System.out.println("\t * " + name + " : Réponse reçue " + response);
 
 			} catch (IOException e1) {
@@ -66,7 +72,7 @@ public class ClientConnexion implements Runnable {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		}
+		// }
 
 		writer.write("CLOSE");
 		writer.flush();
@@ -80,12 +86,12 @@ public class ClientConnexion implements Runnable {
 	}
 
 	// Méthode pour lire les réponses du serveur
-	private String read() throws IOException{      
-	      String response = "";
-	      int stream;
-	      byte[] b = new byte[4096];
-	      stream = reader.read(b);
-	      response = new String(b, 0, stream);      
-	      return response;
-	   }
+	private String read() throws IOException {
+		String response = "";
+		int stream;
+		byte[] b = new byte[4096];
+		stream = reader.read(b);
+		response = new String(b, 0, stream);
+		return response;
+	}
 }

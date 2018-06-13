@@ -1,4 +1,4 @@
-package com.imie.pong.service;
+package com.imie.pong.server;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -8,23 +8,24 @@ import java.net.Socket;
 import java.net.SocketException;
 
 public class ClientProcessor implements Runnable {
-	
+
 	private Socket sock;
 	private PrintWriter writer = null;
 	private BufferedInputStream reader = null;
+	
+	boolean closeConnexion = false;
 
 	public ClientProcessor(Socket pSock) {
 		sock = pSock;
 	}
 
-	@Override
+	// Le traitement lancé dans un thread séparé
 	public void run() {
-
+		
 		System.err.println("Lancement du traitement de la connexion cliente");
 
-		boolean closeConnexion = false;
-		// tant que la connexion est active, on traite les demandes
 
+		// tant que la connexion est active, on traite les demandes
 		while (!sock.isClosed()) {
 
 			try {
@@ -33,7 +34,7 @@ public class ClientProcessor implements Runnable {
 				writer = new PrintWriter(sock.getOutputStream());
 				reader = new BufferedInputStream(sock.getInputStream());
 
-				// On attend la demande client
+				// On attend la demande du client
 				String response = read();
 				InetSocketAddress remote = (InetSocketAddress) sock.getRemoteSocketAddress();
 
@@ -46,7 +47,7 @@ public class ClientProcessor implements Runnable {
 				System.err.println("\n" + debug);
 
 				// On traite la demande du client en fonction de la commande envoyée
-				String toSend = "";
+				String toSend = "test";
 
 //				switch (response.toUpperCase()) {
 //				case "FULL":
@@ -81,7 +82,6 @@ public class ClientProcessor implements Runnable {
 					sock.close();
 					break;
 				}
-
 			} catch (SocketException e) {
 				System.err.println("LA CONNEXION A ETE INTERROMPUE ! ");
 				break;
@@ -97,7 +97,13 @@ public class ClientProcessor implements Runnable {
 		int stream;
 		byte[] b = new byte[4096];
 		stream = reader.read(b);
-		response = new String(b, 0, stream);
+		if(stream != -1) {
+			response = new String(b, 0, stream);
+		}
+		else {
+			closeConnexion = true;
+		}
 		return response;
 	}
+
 }

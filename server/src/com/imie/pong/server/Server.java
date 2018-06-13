@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 public class Server {
 
@@ -20,7 +19,9 @@ public class Server {
 	 */
 	public Server() {
 		try {
+			
 			server = new ServerSocket(port, 100, InetAddress.getByName(host));
+		
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -38,6 +39,7 @@ public class Server {
 		port = pPort;
 
 		try {
+			
 			server = new ServerSocket(port, 100, InetAddress.getByName(host));
 
 		} catch (IOException e) {
