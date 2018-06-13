@@ -3,28 +3,34 @@
  */
 package com.imie.pong.model;
 
-import com.sun.org.apache.xalan.internal.xsltc.util.IntegerArray;
-
 /**
  * @author Audrey
  *
  */
 public class Racket {
-	public static final int SIZE = 4;
+	public static final int SIZE = 2;
 	private String name;
 	private int[] position_y = new int[2];
 	private int side;
 
-	public Racket(String name, String side, Field f) {
+	/**
+	 * @return the side
+	 */
+	public int getSide() {
+		return side;
+	}
+
+	/**
+	 * @param side the side to set
+	 */
+	public void setSide(int side) {
+		this.side = side;
+	}
+
+	public Racket(String name, int side_x) {
 		this.setName(name);
-		if (side.equals("right")) {
-			this.side = -1;
-		} else
-			if (side.equals("left")) {
-				this.side = 0;
-			} else {
-				System.out.println("ERROR - the racket could not be positioned in the field");
-		}
+		this.setSide(side_x);
+
 	}
 
 	/**
@@ -51,9 +57,9 @@ public class Racket {
 	/**
 	 * @param y1 the position to set
 	 */
-	public void setPosition(int y1, int y) {
-		this.position_y[0] = y1;
-		this.position_y[1] = y;
+	public void setPosition(int y) {
+		this.position_y[0] = y;
+		this.position_y[1] = y + SIZE;
 		
 	}
 }
